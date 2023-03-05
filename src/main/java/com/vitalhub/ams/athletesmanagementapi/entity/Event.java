@@ -18,7 +18,7 @@ public class Event {
     @Column(name = "event_id")
     private String eventId;
 
-    @Column(name = "event_name", length = 100, nullable = false)
+    @Column(name = "event_name", length = 100)
     private String eventName;
 
     @OneToMany(mappedBy = "event")

@@ -5,7 +5,6 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.Map;
 import java.util.Set;
 
 @Entity
@@ -29,9 +28,6 @@ public class Athlete {
     @Column(name = "last_name", length = 100, nullable = false)
     private String lastName;
 
-    @JoinColumn(name="country", nullable=false)
-    private String country;
-
     @Column(name = "dob", nullable = false)
     @Temporal(TemporalType.DATE)
     private Date dob;
@@ -51,15 +47,11 @@ public class Athlete {
     @JoinColumn(name = "gender_id", nullable = false)
     private Gender gender;
 
-//    @ManyToMany(fetch = FetchType.LAZY)
-//    @JoinTable(
-//            name = "athlete_event",
-//            joinColumns = @JoinColumn(name = "athlete_id"),
-//            inverseJoinColumns = @JoinColumn(name = "event_id"))
-//    private Set<Event> events;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "country_id", nullable = false)
+    private Country country;
 
     @OneToMany(mappedBy = "athlete", cascade = CascadeType.ALL)
     private Set<AthleteEvent> athleteEvents;
-
 
 }

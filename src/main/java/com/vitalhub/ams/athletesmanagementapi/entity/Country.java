@@ -9,20 +9,20 @@ import javax.persistence.*;
 import java.util.Set;
 
 @Entity
-@Table(name = "gender")
+@Table(name = "country")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Gender {
+public class Country {
 
     @Id
-    @Column(name = "gender_id")
-    private String genderId;
+    @Column(name = "country_id")
+    private String countryId;
 
-    @Column(name = "gender", length = 20)
-    private String gender;
+    @Column(name = "country", length = 100)
+    private String country;
 
-    @OneToMany(mappedBy = "gender")
+    @OneToMany(mappedBy = "country")
     private Set<Athlete> athletes;
 }

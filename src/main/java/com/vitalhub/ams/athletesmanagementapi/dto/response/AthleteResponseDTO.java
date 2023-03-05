@@ -14,7 +14,7 @@ import java.util.List;
 public class AthleteResponseDTO {
     private String firstName;
     private String lastName;
-    private String country;
+    private String countryId;
     private String genderId;
     private Date dob;
     private String photo;

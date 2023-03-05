@@ -13,6 +13,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.Period;
@@ -23,6 +24,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class AthleteServiceImpl implements AthleteService {
 
     private final AthleteRepository athleteRepository;
@@ -41,9 +43,9 @@ public class AthleteServiceImpl implements AthleteService {
 
         LocalDate dobLocal = dto.getDob().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         if (Period.between(dobLocal, LocalDate.now()).getYears() > 16 && !dto.getEventIdList().isEmpty() || true) {  //todo
+
             Athlete athlete = modelMapper.map(dto, Athlete.class);
-            athlete.setAthleteEvents(dto.getEventIdList().stream()
-                    .map(val -> new AthleteEvent(athlete, new Event(val))).collect(Collectors.toSet()));
+            athlete.setAthleteId("000");
 
             Optional<Athlete> existingAthlete = athleteRepository.findAthleteByFirstNameAndLastNameAndDobAndGenderAndCountry(
                     athlete.getFirstName(), athlete.getLastName(), athlete.getDob(), athlete.getGender(), athlete.getCountry());
@@ -53,6 +55,8 @@ public class AthleteServiceImpl implements AthleteService {
             }
             athlete.setCreated(new Date());
             athlete.setLastUpdate(new Date());
+            athlete.setAthleteEvents(dto.getEventIdList().stream()
+                    .map(val -> new AthleteEvent(athlete, new Event(val))).collect(Collectors.toSet()));
 
             athleteRepository.save(athlete);
             return new CommonResponseDTO(HttpStatus.CREATED, "Athlete added Successfully.", dto);
