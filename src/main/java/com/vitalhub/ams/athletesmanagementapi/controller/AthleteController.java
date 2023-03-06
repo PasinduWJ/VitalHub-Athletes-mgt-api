@@ -21,8 +21,11 @@ public class AthleteController {
         this.athleteService = athleteService;
     }
 
-    @PostMapping("/save")
-    public ResponseEntity<StandardResponse> addAthlete(@RequestBody AthleteRequestDTO dto) {
+    @PostMapping(value = "/save")
+    public ResponseEntity<StandardResponse> addAthlete(
+            @RequestBody AthleteRequestDTO dto
+//            @RequestPart(value = "image", required = false) MultipartFile file
+    ) {
         StandardResponse response = null;
         try {
             CommonResponseDTO responseDTO = athleteService.addAthlete(dto);

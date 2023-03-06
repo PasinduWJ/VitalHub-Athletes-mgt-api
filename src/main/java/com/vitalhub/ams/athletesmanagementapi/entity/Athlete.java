@@ -32,8 +32,8 @@ public class Athlete {
     @Temporal(TemporalType.DATE)
     private Date dob;
 
-    @Column(name = "photo")
-    private String photo;
+    @Embedded
+    private ProfileImage profileImage;
 
     @Column(name = "created", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)

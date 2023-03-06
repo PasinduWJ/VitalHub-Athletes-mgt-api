@@ -1,5 +1,7 @@
 package com.vitalhub.ams.athletesmanagementapi.dto.request;
+import com.vitalhub.ams.athletesmanagementapi.dto.ProfileImageDTO;
 import lombok.*;
+
 import java.util.Date;
 import java.util.List;
 
@@ -14,6 +16,6 @@ public class AthleteRequestDTO {
     private String countryId;
     private String genderId;
     private Date dob;
-    private String photo;
+    private ProfileImageDTO profileImage;
     private List<String> eventIdList;
 }

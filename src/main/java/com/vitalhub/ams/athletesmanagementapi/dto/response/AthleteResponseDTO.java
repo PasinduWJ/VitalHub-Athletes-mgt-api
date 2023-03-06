@@ -1,6 +1,7 @@
 package com.vitalhub.ams.athletesmanagementapi.dto.response;
 
 import com.vitalhub.ams.athletesmanagementapi.dto.AthleteEventDTO;
+import com.vitalhub.ams.athletesmanagementapi.dto.ProfileImageDTO;
 import lombok.*;
 
 import java.util.Date;
@@ -17,6 +18,6 @@ public class AthleteResponseDTO {
     private String countryId;
     private String genderId;
     private Date dob;
-    private String photo;
+    private ProfileImageDTO profileImage;
     private List<AthleteEventDTO> athleteEvents;
 }
