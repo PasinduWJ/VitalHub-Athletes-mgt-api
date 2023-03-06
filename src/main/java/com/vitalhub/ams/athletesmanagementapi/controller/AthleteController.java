@@ -7,7 +7,10 @@ import com.vitalhub.ams.athletesmanagementapi.util.StandardResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @CrossOrigin
@@ -22,10 +25,7 @@ public class AthleteController {
     }
 
     @PostMapping(value = "/save")
-    public ResponseEntity<StandardResponse> addAthlete(
-            @RequestBody AthleteRequestDTO dto
-//            @RequestPart(value = "image", required = false) MultipartFile file
-    ) {
+    public ResponseEntity<StandardResponse> addAthlete(@Valid @RequestBody AthleteRequestDTO dto) {
         StandardResponse response = null;
         try {
             CommonResponseDTO responseDTO = athleteService.addAthlete(dto);
