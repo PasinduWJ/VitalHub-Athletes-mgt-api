@@ -43,43 +43,6 @@ public class AthleteController {
         }
     }
 
-    @GetMapping(value = "/find", params = "id")
-    public ResponseEntity<StandardResponse> findAthletebyId(@RequestParam String id) {
-        StandardResponse response = null;
-        try {
-            CommonResponseDTO responseDTO = athleteService.getAthlete(id);
-            response = new StandardResponse(
-                    responseDTO.getCode(),
-                    responseDTO.getMessage(),
-                    responseDTO.getData());
-        } catch (Exception e) {
-            response = new StandardResponse(
-                    HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                    e.getMessage(),
-                    null);
-        } finally {
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        }
-    }
-
-    @GetMapping("/findAll")
-    public ResponseEntity<StandardResponse> findAllAthlete() {
-        StandardResponse response = null;
-        try {
-            CommonResponseDTO responseDTO = athleteService.getAllAthlete();
-            response = new StandardResponse(
-                    responseDTO.getCode(),
-                    responseDTO.getMessage(),
-                    responseDTO.getData());
-        } catch (Exception e) {
-            response = new StandardResponse(
-                    HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                    e.getMessage(),
-                    null);
-        } finally {
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        }
-    }
 
     @GetMapping(value = "/search")
     public ResponseEntity<StandardResponse> searchAthlete(

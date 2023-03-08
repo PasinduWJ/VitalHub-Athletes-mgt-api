@@ -11,6 +11,8 @@ import com.vitalhub.ams.athletesmanagementapi.service.AthleteService;
 import com.vitalhub.ams.athletesmanagementapi.util.FileCompress;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -85,50 +87,6 @@ public class AthleteServiceImpl implements AthleteService {
     }
 
     @Override
-    public CommonResponseDTO getAthlete(String athleteId) {
-
-        Optional<Athlete> athlete = athleteRepository.findById(athleteId);
-        if (athlete.isPresent()) {
-            AthleteResponseDTO responseDTO = modelMapper.map(athlete, AthleteResponseDTO.class);
-
-            ProfileImageDTO image = modelMapper.map(athlete.get().getProfileImage(), ProfileImageDTO.class);
-            if (athlete.get().getProfileImage() != null && athlete.get().getProfileImage().getImageData().length > 0) {
-                byte[] compressData = fileCompress.decompressBytes(athlete.get().getProfileImage().getImageData());
-                image.setImageData(Base64.getEncoder().encodeToString(compressData));
-                responseDTO.setProfileImage(image);
-            } else {
-                responseDTO.setProfileImage(null);
-            }
-            return new CommonResponseDTO(HttpStatus.OK.value(), athleteId, responseDTO);
-        } else {
-            return new CommonResponseDTO(HttpStatus.NOT_FOUND.value(), "Athlete Cannot found", athleteId);
-        }
-    }
-
-    @Override
-    public CommonResponseDTO getAllAthlete() {
-        List<Athlete> athleteList = athleteRepository.findAll();
-        if (!athleteList.isEmpty()) {
-            List<AthleteResponseDTO> responseDTOList = athleteList.stream()
-                    .map(athlete -> {
-                        AthleteResponseDTO responseDTO = modelMapper.map(athlete, AthleteResponseDTO.class);
-                        ProfileImageDTO image = modelMapper.map(athlete.getProfileImage(), ProfileImageDTO.class);
-                        if (athlete.getProfileImage() != null && athlete.getProfileImage().getImageData().length > 0) {
-                            byte[] compressData = fileCompress.decompressBytes(athlete.getProfileImage().getImageData());
-                            image.setImageData(Base64.getEncoder().encodeToString(compressData));
-                            responseDTO.setProfileImage(image);
-                        } else {
-                            responseDTO.setProfileImage(null);
-                        }
-                        return responseDTO;
-                    }).collect(Collectors.toList());
-            return new CommonResponseDTO(HttpStatus.OK.value(), "All athletes Details", responseDTOList);
-        } else {
-            return new CommonResponseDTO(HttpStatus.NOT_FOUND.value(), "Athlete Cannot found", null);
-        }
-    }
-
-    @Override
     public CommonResponseDTO searchAthlete(SearchAthleteRequestDTO dto) {
         List<Athlete> athleteList = athleteRepository.findAll(where((root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
@@ -151,6 +109,8 @@ public class AthleteServiceImpl implements AthleteService {
             }
             return cb.and(predicates.toArray(new Predicate[predicates.size()]));
         }));
+        Pageable pageable = PageRequest.of(1, 1);
+        List<Athlete> athleteListPageable = athleteRepository.findAll(athleteList, pageable);
         if (!athleteList.isEmpty()) {
             List<AthleteResponseDTO> responseDTOList = athleteList.stream()
                     .map(athlete -> {
@@ -165,6 +125,7 @@ public class AthleteServiceImpl implements AthleteService {
                         }
                         return responseDTO;
                     }).collect(Collectors.toList());
+
             return new CommonResponseDTO(HttpStatus.OK.value(), "All athletes Details", responseDTOList);
         } else {
             return new CommonResponseDTO(HttpStatus.NOT_FOUND.value(), "Athlete Cannot found", null);

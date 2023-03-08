@@ -8,6 +8,6 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 public class EventDTO {
-    private String eventId;
+    private String id;
     private String event;
 }

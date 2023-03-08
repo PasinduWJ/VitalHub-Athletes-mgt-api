@@ -29,8 +29,6 @@ public class CommonController {
         StandardResponse response = null;
         try {
             Map<String,Object> mapData= new HashMap<>();
-            System.out.println(commonService.getAllCountry().get(0).getCountryId());
-            System.out.println(commonService.getAllCountry().get(0).getCountry());
             mapData.put("country", commonService.getAllCountry());
             mapData.put("gender", commonService.getAllGender());
             mapData.put("event", commonService.getAllEvent());

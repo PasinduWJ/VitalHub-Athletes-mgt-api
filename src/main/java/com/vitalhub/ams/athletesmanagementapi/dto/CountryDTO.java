@@ -8,6 +8,6 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 public class CountryDTO {
-    private String countryId;
+    private String id;
     private String country;
 }

@@ -8,6 +8,6 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 public class GenderDTO {
-    private String genderId;
+    private String id;
     private String gender;
 }
