@@ -42,8 +42,7 @@ public class AthleteController {
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         }
     }
-
-
+    
     @GetMapping(value = "/search")
     public ResponseEntity<StandardResponse> searchAthlete(
             @RequestParam(required = false) String name,

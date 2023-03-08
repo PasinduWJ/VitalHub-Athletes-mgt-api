@@ -38,13 +38,13 @@ public class CommonServiceImpl implements CommonService {
     @Override
     public List<CountryDTO> getAllCountry() {
         List<Country> countryList = countryRepository.findAll();
-        return countryList.stream().map(country -> new CountryDTO(country.getCountryId(),country.getCountry())).collect(Collectors.toList());
+        return countryList.stream().map(country -> new CountryDTO(country.getCountryId(), country.getCountry())).collect(Collectors.toList());
     }
 
     @Override
     public List<GenderDTO> getAllGender() {
         List<Gender> genderList = genderRepository.findAll();
-        return genderList.stream().map(gender -> new GenderDTO(gender.getGenderId(),gender.getGenderId())).collect(Collectors.toList());
+        return genderList.stream().map(gender -> new GenderDTO(gender.getGenderId(), gender.getGenderId())).collect(Collectors.toList());
     }
 
     @Override

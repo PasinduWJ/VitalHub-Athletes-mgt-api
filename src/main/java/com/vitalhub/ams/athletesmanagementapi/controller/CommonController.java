@@ -1,13 +1,14 @@
 package com.vitalhub.ams.athletesmanagementapi.controller;
 
-import com.vitalhub.ams.athletesmanagementapi.dto.response.CommonResponseDTO;
-import com.vitalhub.ams.athletesmanagementapi.service.AthleteService;
 import com.vitalhub.ams.athletesmanagementapi.service.CommonService;
 import com.vitalhub.ams.athletesmanagementapi.util.StandardResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,7 +29,7 @@ public class CommonController {
     public ResponseEntity<StandardResponse> getAllCommonData() {
         StandardResponse response = null;
         try {
-            Map<String,Object> mapData= new HashMap<>();
+            Map<String, Object> mapData = new HashMap<>();
             mapData.put("country", commonService.getAllCountry());
             mapData.put("gender", commonService.getAllGender());
             mapData.put("event", commonService.getAllEvent());

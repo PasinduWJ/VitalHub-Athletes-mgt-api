@@ -11,8 +11,6 @@ import com.vitalhub.ams.athletesmanagementapi.service.AthleteService;
 import com.vitalhub.ams.athletesmanagementapi.util.FileCompress;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -109,8 +107,7 @@ public class AthleteServiceImpl implements AthleteService {
             }
             return cb.and(predicates.toArray(new Predicate[predicates.size()]));
         }));
-        Pageable pageable = PageRequest.of(1, 1);
-        List<Athlete> athleteListPageable = athleteRepository.findAll(athleteList, pageable);
+
         if (!athleteList.isEmpty()) {
             List<AthleteResponseDTO> responseDTOList = athleteList.stream()
                     .map(athlete -> {
