@@ -8,6 +8,6 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 public class AthleteEventDTO {
-    private EventDTO event;
+    private String eventId;
     private String result;
 }

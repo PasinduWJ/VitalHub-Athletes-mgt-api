@@ -8,8 +8,8 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 public class AthletesManagementApiApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(AthletesManagementApiApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(AthletesManagementApiApplication.class, args);
+    }
 
 }

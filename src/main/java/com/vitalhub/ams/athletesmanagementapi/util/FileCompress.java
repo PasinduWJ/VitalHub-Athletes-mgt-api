@@ -1,12 +1,9 @@
 package com.vitalhub.ams.athletesmanagementapi.util;
 
-import com.vitalhub.ams.athletesmanagementapi.dto.ProfileImageDTO;
-import com.vitalhub.ams.athletesmanagementapi.entity.ProfileImage;
 import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
@@ -36,8 +33,8 @@ public class FileCompress {
     }
 
     // uncompress the image bytes before returning it to the angular application
-    public ProfileImageDTO decompressBytes(ProfileImageDTO dto) {
-        byte[] data = dto.getImageData().getBytes(StandardCharsets.UTF_8);
+    public byte[] decompressBytes(byte[] data) {
+
         Inflater inflater = new Inflater();
         inflater.setInput(data);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream(data.length);
@@ -51,8 +48,6 @@ public class FileCompress {
         } catch (IOException ioe) {
         } catch (DataFormatException e) {
         }
-
-        dto.setImageData(outputStream.toByteArray().toString());
-        return dto;
+        return outputStream.toByteArray();
     }
 }

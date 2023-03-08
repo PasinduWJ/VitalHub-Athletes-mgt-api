@@ -2,12 +2,10 @@ package com.vitalhub.ams.athletesmanagementapi.service.impl;
 
 import com.vitalhub.ams.athletesmanagementapi.dto.ProfileImageDTO;
 import com.vitalhub.ams.athletesmanagementapi.dto.request.AthleteRequestDTO;
+import com.vitalhub.ams.athletesmanagementapi.dto.request.SearchAthleteRequestDTO;
 import com.vitalhub.ams.athletesmanagementapi.dto.response.AthleteResponseDTO;
 import com.vitalhub.ams.athletesmanagementapi.dto.response.CommonResponseDTO;
-import com.vitalhub.ams.athletesmanagementapi.entity.Athlete;
-import com.vitalhub.ams.athletesmanagementapi.entity.AthleteEvent;
-import com.vitalhub.ams.athletesmanagementapi.entity.Event;
-import com.vitalhub.ams.athletesmanagementapi.entity.ProfileImage;
+import com.vitalhub.ams.athletesmanagementapi.entity.*;
 import com.vitalhub.ams.athletesmanagementapi.repository.AthleteRepository;
 import com.vitalhub.ams.athletesmanagementapi.service.AthleteService;
 import com.vitalhub.ams.athletesmanagementapi.util.FileCompress;
@@ -17,14 +15,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Predicate;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZoneId;
-import java.util.Base64;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static org.springframework.data.jpa.domain.Specification.where;
 
 @Service
 @Transactional
@@ -54,14 +53,17 @@ public class AthleteServiceImpl implements AthleteService {
                     athlete.getFirstName(), athlete.getLastName(), athlete.getDob(), athlete.getGender(), athlete.getCountry());
 
             if (existingAthlete.isPresent()) {
-                return new CommonResponseDTO(HttpStatus.BAD_REQUEST, "The Athlete already exist.", dto);
+                return new CommonResponseDTO(HttpStatus.BAD_REQUEST.value(), "The Athlete already exist.", dto);
             }
+
             try {
                 ProfileImage image = athlete.getProfileImage();
                 if (dto.getProfileImage() != null && dto.getProfileImage().getImageData() != "") {
-                    image.setImageData(Base64.getDecoder().decode(dto.getProfileImage().getImageData()));
+                    byte[] compressData = fileCompress.compressBytes(Base64.getDecoder().decode(dto.getProfileImage().getImageData()));
+
+                    image.setImageData(compressData);
                     athlete.setProfileImage(image);
-                }else{
+                } else {
                     athlete.setProfileImage(null);
                 }
 
@@ -75,9 +77,9 @@ public class AthleteServiceImpl implements AthleteService {
                     .map(val -> new AthleteEvent(athlete, new Event(val))).collect(Collectors.toSet()));
 
             athleteRepository.save(athlete);
-            return new CommonResponseDTO(HttpStatus.CREATED, "Athlete added Successfully.", dto);
+            return new CommonResponseDTO(HttpStatus.CREATED.value(), "Athlete added Successfully.", dto);
         } else {
-            return new CommonResponseDTO(HttpStatus.BAD_REQUEST, "Age must be grater than 16 years.", dto);
+            return new CommonResponseDTO(HttpStatus.BAD_REQUEST.value(), "Age must be grater than 16 years.", dto);
         }
 
     }
@@ -89,16 +91,17 @@ public class AthleteServiceImpl implements AthleteService {
         if (athlete.isPresent()) {
             AthleteResponseDTO responseDTO = modelMapper.map(athlete, AthleteResponseDTO.class);
 
-            ProfileImageDTO image = modelMapper.map(athlete.get().getProfileImage() ,ProfileImageDTO.class) ;
+            ProfileImageDTO image = modelMapper.map(athlete.get().getProfileImage(), ProfileImageDTO.class);
             if (athlete.get().getProfileImage() != null && athlete.get().getProfileImage().getImageData().length > 0) {
-                image.setImageData(Base64.getEncoder().encodeToString(athlete.get().getProfileImage().getImageData()));
+                byte[] compressData = fileCompress.decompressBytes(athlete.get().getProfileImage().getImageData());
+                image.setImageData(Base64.getEncoder().encodeToString(compressData));
                 responseDTO.setProfileImage(image);
-            }else{
+            } else {
                 responseDTO.setProfileImage(null);
             }
-            return new CommonResponseDTO(HttpStatus.OK, athleteId, responseDTO);
+            return new CommonResponseDTO(HttpStatus.OK.value(), athleteId, responseDTO);
         } else {
-            return new CommonResponseDTO(HttpStatus.NOT_FOUND, "Athlete Cannot found", athleteId);
+            return new CommonResponseDTO(HttpStatus.NOT_FOUND.value(), "Athlete Cannot found", athleteId);
         }
     }
 
@@ -109,18 +112,62 @@ public class AthleteServiceImpl implements AthleteService {
             List<AthleteResponseDTO> responseDTOList = athleteList.stream()
                     .map(athlete -> {
                         AthleteResponseDTO responseDTO = modelMapper.map(athlete, AthleteResponseDTO.class);
-                        ProfileImageDTO image = modelMapper.map(athlete.getProfileImage(),ProfileImageDTO.class) ;
+                        ProfileImageDTO image = modelMapper.map(athlete.getProfileImage(), ProfileImageDTO.class);
                         if (athlete.getProfileImage() != null && athlete.getProfileImage().getImageData().length > 0) {
-                            image.setImageData(Base64.getEncoder().encodeToString(athlete.getProfileImage().getImageData()));
+                            byte[] compressData = fileCompress.decompressBytes(athlete.getProfileImage().getImageData());
+                            image.setImageData(Base64.getEncoder().encodeToString(compressData));
                             responseDTO.setProfileImage(image);
-                        }else{
+                        } else {
                             responseDTO.setProfileImage(null);
                         }
                         return responseDTO;
                     }).collect(Collectors.toList());
-            return new CommonResponseDTO(HttpStatus.OK, "All athletes Details", responseDTOList);
+            return new CommonResponseDTO(HttpStatus.OK.value(), "All athletes Details", responseDTOList);
         } else {
-            return new CommonResponseDTO(HttpStatus.NOT_FOUND, "Athlete Cannot found", null);
+            return new CommonResponseDTO(HttpStatus.NOT_FOUND.value(), "Athlete Cannot found", null);
+        }
+    }
+
+    @Override
+    public CommonResponseDTO searchAthlete(SearchAthleteRequestDTO dto) {
+        List<Athlete> athleteList = athleteRepository.findAll(where((root, query, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            if (dto.getName() != null && !dto.getName().isEmpty()) {
+                predicates.add(cb.or(cb.like(cb.lower(root.get("firstName")), "%" + dto.getName().toLowerCase() + "%"),
+                        cb.like(cb.lower(root.get("lastName")), "%" + dto.getName().toLowerCase() + "%")));
+            }
+            if (dto.getGenderId() != null && !dto.getGenderId().isEmpty()) {
+                Join<Athlete, Gender> join = root.join("gender");
+                predicates.add(cb.equal(join.get("genderId"), dto.getGenderId()));
+            }
+            if (dto.getCountryId() != null && !dto.getCountryId().isEmpty()) {
+                Join<Athlete, Country> join = root.join("country");
+                predicates.add(cb.equal(join.get("countryId"), dto.getCountryId()));
+            }
+            if (dto.getEventId() != null && !dto.getEventId().isEmpty()) {
+                Join<Athlete, AthleteEvent> join = root.join("athleteEvents");
+                Join<AthleteEvent, Event> joinEvent = join.join("event");
+                predicates.add(cb.equal(joinEvent.get("eventId"), dto.getEventId()));
+            }
+            return cb.and(predicates.toArray(new Predicate[predicates.size()]));
+        }));
+        if (!athleteList.isEmpty()) {
+            List<AthleteResponseDTO> responseDTOList = athleteList.stream()
+                    .map(athlete -> {
+                        AthleteResponseDTO responseDTO = modelMapper.map(athlete, AthleteResponseDTO.class);
+                        ProfileImageDTO image = modelMapper.map(athlete.getProfileImage(), ProfileImageDTO.class);
+                        if (athlete.getProfileImage() != null && athlete.getProfileImage().getImageData().length > 0) {
+                            byte[] compressData = fileCompress.decompressBytes(athlete.getProfileImage().getImageData());
+                            image.setImageData(Base64.getEncoder().encodeToString(compressData));
+                            responseDTO.setProfileImage(image);
+                        } else {
+                            responseDTO.setProfileImage(null);
+                        }
+                        return responseDTO;
+                    }).collect(Collectors.toList());
+            return new CommonResponseDTO(HttpStatus.OK.value(), "All athletes Details", responseDTOList);
+        } else {
+            return new CommonResponseDTO(HttpStatus.NOT_FOUND.value(), "Athlete Cannot found", null);
         }
     }
 

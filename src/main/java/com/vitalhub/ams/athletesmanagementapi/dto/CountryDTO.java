@@ -7,7 +7,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class EventDTO {
-    private String eventId;
-    private String event;
+public class CountryDTO {
+    private String countryId;
+    private String country;
 }

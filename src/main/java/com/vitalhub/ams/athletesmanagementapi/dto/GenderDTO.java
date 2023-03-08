@@ -7,7 +7,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class EventDTO {
-    private String eventId;
-    private String event;
+public class GenderDTO {
+    private String genderId;
+    private String gender;
 }
