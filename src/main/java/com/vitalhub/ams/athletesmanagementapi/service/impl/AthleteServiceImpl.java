@@ -136,7 +136,7 @@ public class AthleteServiceImpl implements AthleteService {
                             } else {
                                 responseDTO.setProfileImage(new ProfileImageDTO());
                             }
-                        }catch(Exception e){
+                        } catch (Exception e) {
                             responseDTO.setProfileImage(new ProfileImageDTO());
                         }
                         return responseDTO;
@@ -166,7 +166,7 @@ public class AthleteServiceImpl implements AthleteService {
                 } else {
                     responseDTO.setProfileImage(new ProfileImageDTO());
                 }
-            }catch(Exception e){
+            } catch (Exception e) {
                 responseDTO.setProfileImage(new ProfileImageDTO());
             }
             AthleteResponseDTO responseDTOList = responseDTO;
