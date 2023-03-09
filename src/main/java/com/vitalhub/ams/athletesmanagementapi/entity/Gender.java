@@ -25,4 +25,8 @@ public class Gender {
 
     @OneToMany(mappedBy = "gender")
     private Set<Athlete> athletes;
+
+    public Gender(String genderId) {
+        this.genderId = genderId;
+    }
 }

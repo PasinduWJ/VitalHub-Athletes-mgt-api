@@ -25,4 +25,8 @@ public class Country {
 
     @OneToMany(mappedBy = "country")
     private Set<Athlete> athletes;
+
+    public Country(String countryId) {
+        this.countryId = countryId;
+    }
 }

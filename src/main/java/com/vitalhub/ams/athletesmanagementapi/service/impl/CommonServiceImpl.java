@@ -35,18 +35,21 @@ public class CommonServiceImpl implements CommonService {
         this.eventRepository = eventRepository;
     }
 
+    //get all country for select drop-downs
     @Override
     public List<CountryDTO> getAllCountry() {
         List<Country> countryList = countryRepository.findAll();
         return countryList.stream().map(country -> new CountryDTO(country.getCountryId(), country.getCountry())).collect(Collectors.toList());
     }
 
+    //get all gender for select drop-downs
     @Override
     public List<GenderDTO> getAllGender() {
         List<Gender> genderList = genderRepository.findAll();
-        return genderList.stream().map(gender -> new GenderDTO(gender.getGenderId(), gender.getGenderId())).collect(Collectors.toList());
+        return genderList.stream().map(gender -> new GenderDTO(gender.getGenderId(), gender.getGender())).collect(Collectors.toList());
     }
 
+    //get all event for drop-downs
     @Override
     public List<EventDTO> getAllEvent() {
         List<Event> eventList = eventRepository.findAll();

@@ -24,6 +24,27 @@ public class AthleteController {
         this.athleteService = athleteService;
     }
 
+    //get Athlete for update
+    @GetMapping(value = "/get")
+    public ResponseEntity<StandardResponse> getAthlete(@RequestParam String athleteId) {
+        StandardResponse response = null;
+        try {
+            CommonResponseDTO responseDTO = athleteService.getAthlete(athleteId);
+            response = new StandardResponse(
+                    responseDTO.getCode(),
+                    responseDTO.getMessage(),
+                    responseDTO.getData());
+        } catch (Exception e) {
+            response = new StandardResponse(
+                    HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                    e.getMessage(),
+                    null);
+        } finally {
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+    }
+
+    // create Athlete
     @PostMapping(value = "/create")
     public ResponseEntity<StandardResponse> addAthlete(@Valid @RequestBody AthleteRequestDTO dto) {
         StandardResponse response = null;
@@ -42,7 +63,8 @@ public class AthleteController {
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         }
     }
-    
+
+    // view and search athletes
     @GetMapping(value = "/search")
     public ResponseEntity<StandardResponse> searchAthlete(
             @RequestParam(required = false) String name,
@@ -65,6 +87,26 @@ public class AthleteController {
                     null);
         } finally {
             return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+    }
+
+    //update athlete
+    @PostMapping(value = "/update")
+    public ResponseEntity<StandardResponse> updateAthlete(@Valid @RequestParam String id, @RequestBody AthleteRequestDTO dto) {
+        StandardResponse response = null;
+        try {
+            CommonResponseDTO responseDTO = athleteService.updateAthlete(id, dto);
+            response = new StandardResponse(
+                    responseDTO.getCode(),
+                    responseDTO.getMessage(),
+                    responseDTO.getData());
+        } catch (Exception e) {
+            response = new StandardResponse(
+                    HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                    e.getMessage(),
+                    null);
+        } finally {
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
         }
     }
 

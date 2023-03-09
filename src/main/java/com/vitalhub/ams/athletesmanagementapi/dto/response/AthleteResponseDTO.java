@@ -13,6 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @ToString
 public class AthleteResponseDTO {
+    private String athleteId;
     private String firstName;
     private String lastName;
     private String countryId;

@@ -8,4 +8,8 @@ public interface AthleteService {
     public CommonResponseDTO addAthlete(AthleteRequestDTO dto);
 
     public CommonResponseDTO searchAthlete(SearchAthleteRequestDTO dto);
+
+    CommonResponseDTO getAthlete(String athleteId) throws Exception;
+
+    CommonResponseDTO updateAthlete(String id, AthleteRequestDTO dto) throws Exception;
 }
